@@ -56,16 +56,22 @@ COLOR_PANEL_BG = (40, 40, 40) # 右側面板背景色
 # GUI 檔案選擇
 # =============================================================================
 
+# 資料夾路徑
+DATA_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data')
+
 def select_inventory_file() -> Optional[str]:
     """跳出視窗讓使用者選擇 CSV 檔案"""
     root = tk.Tk()
     root.withdraw()
     root.attributes('-topmost', True)
     
+    # 預設開啟 data 資料夾
+    default_dir = DATA_FOLDER if os.path.isdir(DATA_FOLDER) else os.getcwd()
+    
     file_path = filedialog.askopenfilename(
         title="請選擇藥品庫存清單 (Select Inventory CSV)",
         filetypes=[("CSV files", "*.csv"), ("All files", "*.*")],
-        initialdir=os.getcwd()
+        initialdir=default_dir
     )
     
     root.destroy()
@@ -224,7 +230,8 @@ class InventoryManager:
         missing = self.df[~self.df['CAS'].isin(all_found)]
         timestamp = datetime.now().strftime("%Y%m%d_%H%M")
         filename = f"missing_report_{timestamp}.csv"
-        path = os.path.join(self.csv_dir, filename)
+        # 報告存到 data 資料夾
+        path = os.path.join(DATA_FOLDER, filename)
         missing.to_csv(path, index=False, encoding='utf-8-sig')
         return path
 
