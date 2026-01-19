@@ -64,22 +64,27 @@ data = [
     ("2623-87-2", "4-Bromobutyric acid", "ACROS", "25 G")
 ]
 
-# 設定正確的中文欄位名稱
+# 設定輸出路徑 - 直接輸出到 data 資料夾
+script_dir = os.path.dirname(os.path.abspath(__file__))
+data_folder = os.path.join(script_dir, 'data')
+
+# 確保 data 資料夾存在
+os.makedirs(data_folder, exist_ok=True)
+
+filename = "Rotavap_Right_Inventory.csv"
+output_path = os.path.join(data_folder, filename)
 header = ['CAS', '上層藥品名稱', '廠牌', '數量']
-filename = "Clean_Inventory.csv"
 
 try:
-    # newline='' 避免 Windows 產生多餘空行
-    # encoding='utf-8-sig' 讓 Excel 開啟時中文不會亂碼
-    # quoting=csv.QUOTE_MINIMAL 這是關鍵！它會自動幫有逗號的欄位加上雙引號
-    with open(filename, 'w', newline='', encoding='utf-8-sig') as f:
+    # 寫入 CSV 檔案
+    with open(output_path, 'w', newline='', encoding='utf-8-sig') as f:
         writer = csv.writer(f, quoting=csv.QUOTE_MINIMAL)
-        writer.writerow(header)  # 寫入標題
-        writer.writerows(data)   # 寫入資料
+        writer.writerow(header)
+        writer.writerows(data)
         
-    print(f"✅ 修復完成！")
-    print(f"已產生正確的檔案：{os.path.abspath(filename)}")
-    print("請重新執行掃描程式，並選擇這個 'Clean_Inventory.csv' 檔案。")
+    print(f"✅ 檔案產生完成！")
+    print(f"檔名：{output_path}")
+    print("請執行掃描程式，並選擇這個檔案。")
 
 except Exception as e:
     print(f"❌ 錯誤：{e}")
